@@ -277,3 +277,84 @@ input[type="radio"]:checked + .radio-visual {
     height: 280px;
   }
 }
+/* Анкета / присутствие */
+.rsvp-block {
+  background: #fafafa;
+}
+
+.rsvp-intro {
+  font-size: 14px;
+  margin-bottom: 24px;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.field-hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.55);
+  margin-bottom: 6px;
+}
+
+/* Кнопки подтверждения / отказа */
+.rsvp-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.btn-choice {
+  flex: 1;
+  min-width: 140px;
+  border: var(--border);
+  background: #fff;
+  color: var(--ink);
+  padding: 14px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s, background 0.15s, color 0.15s;
+}
+
+.btn-choice--yes {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-choice--no {
+  background: #fff;
+  color: var(--ink);
+}
+
+.btn-choice:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn-choice--yes:hover {
+  background: #e13228;
+}
+
+.btn-choice--no:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* Сообщение о статусе */
+.rsvp-note {
+  margin-top: 16px;
+  font-size: 14px;
+  min-height: 1.2em;
+}
+
+.rsvp-note--success {
+  color: #1a7f2e;
+}
+
+.rsvp-note--error {
+  color: #b00020;
+}
