@@ -1,324 +1,433 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, MapPin, Calendar, ArrowRight, CheckCircle, XCircle, Navigation } from 'lucide-react';
-import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ГОДОВЩИНА // СМОРОДИНЫ</title>
 
-// --- КОНФИГУРАЦИЯ FIREBASE ---
-const firebaseConfig = JSON.parse(__firebase_config);
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-// --- СТИЛИ И АНИМАЦИИ ---
-const CustomStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;800;900&family=Inter:wght@400;600;700&display=swap');
-    
-    .font-archivo { font-family: 'Archivo', sans-serif; }
-    .font-inter { font-family: 'Inter', sans-serif; }
-    
-    .bg-noise {
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  <style>
+    :root {
+      --bg: #F2F2F2;
+      --ink: #111111;
+      --accent: #FF3B30;
+      --border: 2px solid var(--ink);
+      --text-light: #ffffff;
+      --text-dark: #111111;
     }
 
-    @keyframes marquee {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .animate-marquee {
-      animation: marquee 15s linear infinite;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .brutal-shadow {
-      box-shadow: 4px 4px 0px 0px #111;
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.5;
     }
-    @media (min-width: 768px) {
-      .brutal-shadow {
-        box-shadow: 6px 6px 0px 0px #111;
+
+    .wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      border-left: var(--border);
+      border-right: var(--border);
+      min-height: 100vh;
+      background: #fff;
+    }
+
+    /* Бегущая строка — бесконечный цикл */
+    .ticker-wrap {
+      width: 100%;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--text-light);
+      padding: 12px 0;
+      border-bottom: var(--border);
+    }
+
+    .ticker {
+      display: inline-block;
+      white-space: nowrap;
+      will-change: transform;
+      animation: ticker-loop 20s linear infinite;
+    }
+
+    .ticker span {
+      display: inline-block;
+      padding-right: 4rem;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 18px;
+    }
+
+    @keyframes ticker-loop {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
       }
     }
-    .brutal-shadow:active {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px 0px #111;
+
+    /* Герой */
+    .hero {
+      text-align: center;
+      padding: 0;
     }
-    .brutal-shadow-sm {
-      box-shadow: 3px 3px 0px 0px #111;
+
+    .hero-img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(100%) contrast(110%);
+      border-bottom: var(--border);
     }
-    .brutal-input:focus {
+
+    .big-title {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 800;
+      font-size: 56px;
+      line-height: 0.85;
+      text-transform: uppercase;
+      padding: 20px;
+      border-bottom: var(--border);
+      letter-spacing: -0.03em;
+    }
+
+    .big-title span {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--ink);
+    }
+
+    .block {
+      padding: 24px;
+      border-bottom: var(--border);
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: block;
+      opacity: 0.6;
+    }
+
+    .lead-text {
+      font-size: 18px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    /* Детали */
+    .details-row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .details-col {
+      flex: 1;
+      padding: 20px;
+      border-right: var(--border);
+    }
+
+    .details-col:last-child {
+      border-right: none;
+    }
+
+    /* Форма */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: var(--border);
+      border-radius: 0;
+      padding: 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      background: #F9F9F9;
+      margin-top: 5px;
+      box-shadow: 4px 4px 0px var(--ink);
+      transition: transform 0.1s;
+    }
+
+    input:focus,
+    textarea:focus {
       outline: none;
       transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px 0px #111;
+      box-shadow: 2px 2px 0px var(--ink);
     }
-  `}</style>
-);
 
-// --- ГЛАВНЫЙ КОМПОНЕНТ ---
-export default function App() {
-  const [user, setUser] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    attendance: 'yes'
-  });
-  const [status, setStatus] = useState('idle');
-
-  // Логика авторизации
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        if (typeof window.__initial_auth_token !== 'undefined' && window.__initial_auth_token) {
-          await signInWithCustomToken(auth, window.__initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.error("Auth failed", err);
-      }
-    };
-    initAuth();
-    const unsubscribe = onAuthStateChanged(auth, setUser);
-    return () => unsubscribe();
-  }, []);
-
-  // Обработка ввода
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Отправка формы
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!user) return;
-
-    setStatus('loading');
-
-    try {
-      const rsvpRef = collection(db, 'artifacts', appId, 'public', 'data', 'rsvps_smorodins');
-      
-      await addDoc(rsvpRef, {
-        ...formData,
-        userId: user.uid,
-        createdAt: serverTimestamp(),
-        deviceInfo: navigator.userAgent
-      });
-
-      setStatus('success');
-    } catch (error) {
-      console.error("Error saving RSVP:", error);
-      setStatus('error');
+    /* Радио */
+    .radio-container {
+      display: flex;
+      gap: 10px;
     }
-  };
 
-  return (
-    <div className="min-h-screen bg-[#F2F2F2] text-[#111] font-inter selection:bg-[#FF3B30] selection:text-white relative overflow-x-hidden">
-      <CustomStyles />
-      
-      {/* Текстура шума */}
-      <div className="fixed inset-0 pointer-events-none bg-noise z-0 opacity-60 mix-blend-multiply"></div>
+    .radio-box {
+      flex: 1;
+      position: relative;
+    }
 
-      <div className="relative z-10 w-full max-w-xl mx-auto bg-white min-h-screen sm:border-x-2 border-[#111] shadow-2xl">
-        
-        {/* БЕГУЩАЯ СТРОКА (РУССКИЙ ЯЗЫК) */}
-        <div className="bg-[#111] text-white overflow-hidden py-3 border-b-2 border-[#111] select-none">
-          <div className="whitespace-nowrap animate-marquee flex gap-4">
-            {Array(10).fill("20 ИЮНЯ 2026 • ПЕРМЬ • ГОДОВЩИНА • ВРЕМЯ ТУСИТЬ • ").map((text, i) => (
-              <span key={i} className="font-archivo font-black text-sm md:text-lg tracking-wider uppercase">{text}</span>
-            ))}
-          </div>
-        </div>
+    .radio-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+      border: var(--border);
+      font-weight: 600;
+      background: #fff;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
 
-        {/* HERO БЛОК */}
-        <div className="relative border-b-2 border-[#111]">
-            <div className="w-full h-72 md:h-96 bg-gray-200 relative overflow-hidden group">
-                 {/* Заменена картинка на локальный файл */}
-                 <img 
-                    src="smorodiny.jpg" 
-                    alt="Настроение пары" 
-                    className="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      // Фолбек на случай, если локальная картинка не загрузится (для демонстрации)
-                      e.target.src = "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop";
-                    }}
-                />
-                <div className="absolute inset-0 bg-red-500/10 mix-blend-multiply"></div>
-            </div>
-            
-            <div className="p-4 md:p-6 bg-white absolute -bottom-6 right-6 border-2 border-[#111] bg-[#FF3B30] text-white rotate-[-3deg] brutal-shadow-sm">
-                <Heart className="w-6 h-6 md:w-8 md:h-8 fill-current" />
-            </div>
-        </div>
+    input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+    }
 
-        {/* ЗАГОЛОВОК (РУССКИЙ ЯЗЫК + АДАПТИВ) */}
-        <header className="p-6 md:p-8 border-b-2 border-[#111] bg-white pt-10">
-          <h1 className="font-archivo font-black text-4xl md:text-6xl leading-[0.9] uppercase tracking-tighter">
-            Смородины<br/>
-            <span className="text-transparent" style={{ WebkitTextStroke: '1px #111' }}>Годовщина</span>
-          </h1>
-        </header>
+    input[type="radio"]:checked + .radio-visual {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 4px 4px 0 var(--accent);
+      transform: translate(-2px, -2px);
+    }
 
-        {/* ОПИСАНИЕ */}
-        <div className="p-6 md:p-8 border-b-2 border-[#111] bg-white">
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">О событии</span>
-          <p className="text-lg md:text-xl font-bold leading-tight">
-            Выжили в первый год. Нервные клетки потрачены не зря. 
-            Устраиваем шумную вечеринку для своих. <span className="bg-[#FF3B30] text-white px-1 whitespace-nowrap">Без пафоса.</span> С душой.
-          </p>
-        </div>
+    /* Кнопки */
+    .btn-submit,
+    .btn-map {
+      display: inline-block;
+      margin-top: 10px;
+      background: #fff;
+      color: var(--ink);
+      border: var(--border);
+      padding: 10px 14px;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 3px 3px 0px var(--ink);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
 
-        {/* ДЕТАЛИ (АДАПТИВНАЯ СЕТКА) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border-b-2 border-[#111] bg-white divide-y-2 md:divide-y-0 md:divide-x-2 divide-[#111]">
-          {/* Дата */}
-          <div className="p-6 group hover:bg-[#F9F9F9] transition-colors">
-            <div className="mb-2">
-                <Calendar className="w-6 h-6 text-[#FF3B30]" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Дата</span>
-            <p className="font-archivo font-black text-2xl mt-1">20.06.26</p>
-            <p className="text-sm font-semibold">Суббота, 17:00</p>
-          </div>
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      padding: 20px;
+      font-family: 'Archivo', sans-serif;
+      text-transform: uppercase;
+      font-size: 20px;
+      font-weight: 800;
+      box-shadow: 6px 6px 0px var(--ink);
+    }
 
-          {/* Локация + Кнопка маршрута */}
-          <div className="p-6 group hover:bg-[#F9F9F9] transition-colors flex flex-col justify-between">
-             <div>
-               <div className="mb-2">
-                  <MapPin className="w-6 h-6 text-[#FF3B30]" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Локация</span>
-              <p className="font-archivo font-black text-2xl mt-1">Пермь</p>
-              <p className="text-sm font-semibold mb-4">ул. Мира, 41В</p>
-            </div>
-            
-            {/* КНОПКА ПОСТРОИТЬ МАРШРУТ */}
-            <a 
-              href="https://yandex.ru/maps/-/CLD6YH18" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full bg-[#111] text-white py-3 px-4 text-xs font-bold uppercase tracking-wider hover:bg-[#FF3B30] transition-colors brutal-shadow-sm active:translate-y-1 active:translate-x-1 active:shadow-none"
-            >
-              <Navigation className="w-4 h-4" />
-              Построить маршрут
-            </a>
-          </div>
-        </div>
+    .btn-submit:active {
+      transform: translate(4px, 4px);
+      box-shadow: 2px 2px 0px var(--ink);
+    }
 
-        {/* ФОРМА (БЕЗ ЕДЫ) */}
-        <div className="p-6 md:p-8 bg-white pb-20">
-          <h2 className="font-archivo font-black text-2xl md:text-3xl uppercase mb-8 flex items-center gap-2">
-             Анкета <ArrowRight className="w-6 h-6" />
-          </h2>
-          
-          {status === 'success' ? (
-            <div className="border-2 border-[#111] p-8 bg-[#F9F9F9] brutal-shadow text-center animate-in zoom-in duration-300">
-              <CheckCircle className="w-16 h-16 mx-auto mb-4 text-[#FF3B30]" />
-              <h3 className="font-archivo font-black text-2xl uppercase mb-2">Принято!</h3>
-              <p className="font-medium text-sm md:text-base">
-                {formData.attendance === 'yes' 
-                  ? "Ура! Ждем тебя на тусовке. Готовь печень!" 
-                  : "Эх, жаль... Но мы все равно выпьем за тебя!"}
-              </p>
-              <button 
-                onClick={() => setStatus('idle')}
-                className="mt-6 text-xs md:text-sm underline font-bold uppercase hover:text-[#FF3B30]"
-              >
-                Отправить еще один ответ
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-              
-              {/* Имя */}
-              <div className="relative group">
-                <label className="block text-xs font-bold uppercase tracking-widest mb-2 group-focus-within:text-[#FF3B30] transition-colors">
-                  Кто вы?
-                </label>
-                <input 
-                  type="text" 
-                  name="name"
-                  required
-                  placeholder="Имя Фамилия" 
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full bg-[#F9F9F9] border-2 border-[#111] p-3 md:p-4 text-sm md:text-base font-bold placeholder:font-normal placeholder:text-gray-400 brutal-shadow-sm transition-all brutal-input focus:bg-white rounded-none"
-                />
-              </div>
+    .btn-map:hover {
+      background: var(--ink);
+      color: #fff;
+    }
 
-              {/* Будете? */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-3">
-                  Будете?
-                </label>
-                <div className="flex gap-3 md:gap-4">
-                  <label className="flex-1 cursor-pointer group">
-                    <input 
-                      type="radio" 
-                      name="attendance" 
-                      value="yes" 
-                      checked={formData.attendance === 'yes'}
-                      onChange={handleChange}
-                      className="hidden" 
-                    />
-                    <div className={`
-                      h-12 md:h-14 flex items-center justify-center border-2 border-[#111] font-bold text-sm md:text-base transition-all
-                      ${formData.attendance === 'yes' 
-                        ? 'bg-[#111] text-white brutal-shadow-sm -translate-y-1 -translate-x-1' 
-                        : 'bg-white hover:bg-gray-50'}
-                    `}>
-                      ДА!
-                    </div>
-                  </label>
-                  
-                  <label className="flex-1 cursor-pointer group">
-                    <input 
-                      type="radio" 
-                      name="attendance" 
-                      value="no" 
-                      checked={formData.attendance === 'no'}
-                      onChange={handleChange}
-                      className="hidden" 
-                    />
-                    <div className={`
-                      h-12 md:h-14 flex items-center justify-center border-2 border-[#111] font-bold text-sm md:text-base transition-all
-                      ${formData.attendance === 'no' 
-                        ? 'bg-[#111] text-white brutal-shadow-sm -translate-y-1 -translate-x-1' 
-                        : 'bg-white hover:bg-gray-50'}
-                    `}>
-                      НЕТ :(
-                    </div>
-                  </label>
-                </div>
-              </div>
+    /* Дресс-код */
+    .dress-code .block {
+      background: #f9f9f9;
+    }
 
-              {/* Кнопка отправки */}
-              <button 
-                type="submit" 
-                disabled={status === 'loading'}
-                className="w-full bg-[#FF3B30] text-white border-2 border-[#111] p-4 md:p-5 font-archivo font-black text-lg md:text-xl uppercase tracking-wide brutal-shadow hover:translate-y-1 hover:translate-x-1 hover:shadow-none active:translate-y-1 active:translate-x-1 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
-              >
-                {status === 'loading' ? 'Отправка...' : 'Отправить'}
-              </button>
-
-              {status === 'error' && (
-                <p className="text-red-600 font-bold text-center text-sm flex items-center justify-center gap-2">
-                  <XCircle className="w-4 h-4" />
-                  Что-то пошло не так. Попробуйте снова.
-                </p>
-              )}
-
-            </form>
-          )}
-        </div>
-
-        {/* ФУТЕР */}
-        <footer className="border-t-2 border-[#111] p-6 text-center bg-[#F2F2F2]">
-           <p className="font-archivo font-black uppercase text-xs md:text-sm tracking-widest opacity-40">
-             © 2026 Семья Смородиных
-           </p>
-        </footer>
-
-      </div>
-    </div>
-  );
+.dress-palette {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
 }
+
+.dress-palette img {
+  display: block;
+  max-width: 260px; /* можно 220–300, подбери по вкусу */
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+    }
+
+    .dress-palette img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .section-title {
+      font-family: 'Archivo', sans-serif;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 600px) {
+      .details-col {
+        border-right: none;
+        border-bottom: var(--border);
+      }
+
+      .details-col:last-child {
+        border-bottom: none;
+      }
+
+      .big-title {
+        font-size: 40px;
+      }
+
+      .hero-img {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Бесконечная бегущая строка -->
+  <header class="ticker-wrap" aria-label="Бегущая строка с информацией о событии">
+    <div class="ticker">
+      <span>
+        20 ИЮНЯ 2026 • ПЕРМЬ • Мира 41В • Crystal Hall • 20 ИЮНЯ 2026 • ПЕРМЬ • Мира 41В • Crystal Hall •
+      </span>
+      <span>
+        20 ИЮНЯ 2026 • ПЕРМЬ • Мира 41В • Crystal Hall • 20 ИЮНЯ 2026 • ПЕРМЬ • Мира 41В • Crystal Hall •
+      </span>
+    </div>
+  </header>
+
+  <main class="wrapper">
+    <section class="hero">
+      <img src="smorodiny.jpg" alt="Фото Смородиных" class="hero-img">
+      <h1 class="big-title">
+        Свадебный реванш <br><span>Смородиных</span>
+      </h1>
+    </section>
+
+    <section class="event-info">
+      <div class="block">
+        <span class="label">О событии</span>
+        <p class="lead-text">
+          Брак уже заключили, штамп стоит, а вот нормально погулять забыли.
+          Исправляемся: приглашаем вас на наш свадебный реванш в честь годовщины!
+        </p>
+      </div>
+    </section>
+
+    <section class="details">
+      <div class="details-row">
+        <div class="details-col">
+          <span class="label">Дата</span>
+          <strong>20.06.26</strong><br>Суббота
+          <br><br>
+          Сбор гостей с 16:00<br>
+          Начало в 17:00
+        </div>
+        <div class="details-col">
+          <span class="label">Локация</span>
+          <strong>Пермь</strong><br>ул. Мира, 41В
+          <br>
+          <a href="https://yandex.ru/maps/-/CLD6YH18"
+             class="btn-map"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Открыть локацию на карте">
+            Открыть в картах
+          </a>
+          <br>
+          <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Свадебный%20реванш%20Смородиных&dates=20260620T130000Z/20260620T190000Z&details=Годовщина%20свадьбы&location=Crystal%20Hall%2C%20Мира%2041В%2C%20Пермь"
+             class="btn-map"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Добавить событие в Google Календарь">
+            Добавить в календарь
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="dress-code">
+      <div class="block">
+        <span class="label">Дресс-код</span>
+        <p class="lead-text">
+          Классический или праздничный стиль. Будем рады вас видеть
+          в мягких природных оттенках: тёплый молочный и светло-бежевый,
+          оливково-зелёный и тёмно-хвойный зелёный, пыльно-розовый
+          и глубокий шоколадный коричневый.
+        </p>
+        <div class="dress-palette">
+          <img src="dress.jpg" alt="Палитра оттенков дресс-кода: молочный, бежевый, зелёные и розово-коричневые тона">
+        </div>
+      </div>
+    </section>
+
+    <section class="rsvp">
+      <div class="block">
+        <h2 class="section-title">Анкета</h2>
+        <form id="rsvp-form" action="#" method="post">
+          <div class="form-group">
+            <label for="name" class="label">Кто вы?</label>
+            <input type="text" id="name" name="name" placeholder="Имя Фамилия" required>
+          </div>
+
+          <div class="form-group">
+            <span class="label">Будете?</span>
+            <div class="radio-container">
+              <div class="radio-box">
+                <input type="radio" id="att-yes" name="att" value="yes" checked>
+                <label for="att-yes" class="radio-visual">Да!</label>
+              </div>
+              <div class="radio-box">
+                <input type="radio" id="att-no" name="att" value="no">
+                <label for="att-no" class="radio-visual">Нет :(</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="drink" class="label">Алкоголь</label>
+            <textarea id="drink" name="drink" rows="2" placeholder="Что пьем?"></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">Отправить</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="block" style="text-align: center; border-bottom: none;">
+      <span class="label">© 2026 СМОРОДИНЫ FAM</span>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('rsvp-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Спасибо за ответ! Ждём вас на свадьбе!');
+      });
+    });
+  </script>
+</body>
+</html>
