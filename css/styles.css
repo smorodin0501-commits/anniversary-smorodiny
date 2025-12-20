@@ -129,12 +129,13 @@ body {
   border-right: none;
 }
 
-/* Форма */
+/* Форма: базовые поля */
 .form-group {
   margin-bottom: 20px;
 }
 
 input[type="text"],
+input[type="number"],
 textarea {
   width: 100%;
   border: var(--border);
@@ -145,7 +146,7 @@ textarea {
   background: #F9F9F9;
   margin-top: 5px;
   box-shadow: 4px 4px 0px var(--ink);
-  transition: transform 0.1s;
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
 input:focus,
@@ -155,43 +156,7 @@ textarea:focus {
   box-shadow: 2px 2px 0px var(--ink);
 }
 
-/* Радио */
-.radio-container {
-  display: flex;
-  gap: 10px;
-}
-
-.radio-box {
-  flex: 1;
-  position: relative;
-}
-
-.radio-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-  border: var(--border);
-  font-weight: 600;
-  background: #fff;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-}
-
-input[type="radio"]:checked + .radio-visual {
-  background: var(--ink);
-  color: #fff;
-  box-shadow: 4px 4px 0 var(--accent);
-  transform: translate(-2px, -2px);
-}
-
-/* Кнопки */
-.btn-submit,
+/* Кнопки карт / календаря */
 .btn-map {
   display: inline-block;
   margin-top: 10px;
@@ -207,23 +172,6 @@ input[type="radio"]:checked + .radio-visual {
   box-shadow: 3px 3px 0px var(--ink);
   transition: all 0.2s;
   cursor: pointer;
-}
-
-.btn-submit {
-  width: 100%;
-  background: var(--accent);
-  color: #fff;
-  padding: 20px;
-  font-family: 'Archivo', sans-serif;
-  text-transform: uppercase;
-  font-size: 20px;
-  font-weight: 800;
-  box-shadow: 6px 6px 0px var(--ink);
-}
-
-.btn-submit:active {
-  transform: translate(4px, 4px);
-  box-shadow: 2px 2px 0px var(--ink);
 }
 
 .btn-map:hover {
@@ -258,25 +206,6 @@ input[type="radio"]:checked + .radio-visual {
   font-size: 28px;
 }
 
-/* Адаптивность */
-@media (max-width: 600px) {
-  .details-col {
-    border-right: none;
-    border-bottom: var(--border);
-  }
-
-  .details-col:last-child {
-    border-bottom: none;
-  }
-
-  .big-title {
-    font-size: 40px;
-  }
-
-  .hero-img {
-    height: 280px;
-  }
-}
 /* Анкета / присутствие */
 .rsvp-block {
   background: #fafafa;
@@ -357,4 +286,28 @@ input[type="radio"]:checked + .radio-visual {
 
 .rsvp-note--error {
   color: #b00020;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .details-col {
+    border-right: none;
+    border-bottom: var(--border);
+  }
+
+  .details-col:last-child {
+    border-bottom: none;
+  }
+
+  .big-title {
+    font-size: 40px;
+  }
+
+  .hero-img {
+    height: 280px;
+  }
+
+  .rsvp-actions {
+    flex-direction: column;
+  }
 }
