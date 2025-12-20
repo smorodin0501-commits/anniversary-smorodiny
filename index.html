@@ -86,28 +86,65 @@
       </div>
     </section>
 
+
     <section class="rsvp">
-      <div class="block">
-        <h2 class="section-title">Анкета гостя</h2>
-        <form id="rsvp-form" action="#" method="post">
+      <div class="block rsvp-block">
+        <h2 class="section-title">Присутствие</h2>
+        <p class="rsvp-intro">
+          Пожалуйста, подтвердите ваше присутствие на нашем празднике
+          до 01 мая 2026 года любым удобным способом или заполните форму ниже:
+        </p>
+
+        <form id="rsvp-form" action="#" method="post" novalidate>
           <div class="form-group">
-            <label for="name" class="label">Чтобы подтвердить ваше присутствие, пожалуйста, заполните анкету до 01.05.2026 </label>
-            <input type="text" id="name" name="name" placeholder="Имя Фамилия" required>
+            <label for="name" class="label">Имя и фамилия</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Имя Фамилия"
+              required
+            >
           </div>
 
           <div class="form-group">
-            <span class="label">Будете?</span>
-            <div class="radio-container">
-              <div class="radio-box">
-                <input type="radio" id="att-yes" name="att" value="yes" checked>
-                <label for="att-yes" class="radio-visual">Да!</label>
-              </div>
-              <div class="radio-box">
-                <input type="radio" id="att-no" name="att" value="no">
-                <label for="att-no" class="radio-visual">Нет :(</label>
-              </div>
+            <label for="guests" class="label">Количество персон</label>
+            <input
+              type="number"
+              id="guests"
+              name="guests"
+              min="1"
+              max="10"
+              value="1"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <span class="label">Ответ</span>
+            <div class="rsvp-actions">
+              <button
+                type="button"
+                class="btn-choice btn-choice--yes"
+                data-action="accept"
+              >
+                Подтвердить
+              </button>
+              <button
+                type="button"
+                class="btn-choice btn-choice--no"
+                data-action="decline"
+              >
+                Отклонить
+              </button>
             </div>
           </div>
+
+          <p class="rsvp-note" id="rsvp-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
 
           <div class="form-group">
             <label for="drink" class="label">Пожелание по алкоголю</label>
@@ -129,5 +166,6 @@
   <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
