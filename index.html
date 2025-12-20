@@ -1,324 +1,324 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>Годовщина Александра и Алины Смородиных</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+import React, { useState, useEffect } from 'react';
+import { Heart, MapPin, Calendar, ArrowRight, CheckCircle, XCircle, Navigation } from 'lucide-react';
+import { initializeApp } from "firebase/app";
+import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 
-  <style>
-    :root {
-      --bg-main: #3b0014;
-      --bg-light: #f7f2ef;
-      --accent:   #b41b33;
-      --text-main:#111111;
-      --text-light:#ffffff;
-      --font-main:"Playfair Display", "Times New Roman", serif;
-      --font-second:"Montserrat", "Arial", sans-serif;
-    }
-    * { box-sizing:border-box; margin:0; padding:0; }
+// --- КОНФИГУРАЦИЯ FIREBASE ---
+const firebaseConfig = JSON.parse(__firebase_config);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-    body{
-      font-family:var(--font-second);
-      background:var(--bg-main);
-      color:var(--text-main);
-      display:flex;
-      justify-content:center;
-    }
-    .page{
-      max-width:480px;
-      width:100%;
-      background:var(--bg-main);
-      min-height:100vh;
-      padding:20px 16px 32px;
+// --- СТИЛИ И АНИМАЦИИ ---
+const CustomStyles = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;800;900&family=Inter:wght@400;600;700&display=swap');
+    
+    .font-archivo { font-family: 'Archivo', sans-serif; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+    
+    .bg-noise {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
     }
 
-    /* Фото-блок */
-    .hero-photo{
-      border-radius:24px;
-      overflow:hidden;
-      margin-bottom:18px;
-      position:relative;
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
-    .hero-photo img{
-      width:100%;
-      height:auto;
-      display:block;
-      object-fit:cover;
-    }
-    .hero-tag{
-      position:absolute;
-      left:16px;
-      bottom:14px;
-      padding:6px 12px;
-      border-radius:999px;
-      background:rgba(0,0,0,0.55);
-      color:#fff;
-      font-size:11px;
-      letter-spacing:0.12em;
-      text-transform:uppercase;
+    .animate-marquee {
+      animation: marquee 15s linear infinite;
     }
 
-    header{
-      position:relative;
-      margin-bottom:28px;
-      color:var(--text-light);
-      text-align:left;
+    .brutal-shadow {
+      box-shadow: 4px 4px 0px 0px #111;
     }
-    .tagline-big{
-      font-family:var(--font-main);
-      font-size:52px;
-      line-height:0.9;
-      letter-spacing:0.15em;
-      text-transform:uppercase;
-      opacity:0.15;
-      position:absolute;
-      right:0;
-      top:0;
-    }
-    .couple-block{
-      position:relative;
-      z-index:2;
-      margin-top:36px;
-    }
-    .names{
-      font-family:var(--font-main);
-      font-size:26px;
-      letter-spacing:0.1em;
-      text-transform:uppercase;
-      margin-bottom:6px;
-    }
-    .subtitle{
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:0.16em;
-      opacity:0.7;
-    }
-    .date-place{
-      margin-top:16px;
-      font-size:13px;
-      line-height:1.4;
-      opacity:0.8;
-    }
-    .invitation-text{
-      margin-top:22px;
-      font-size:14px;
-      line-height:1.6;
-      max-width:360px;
-    }
-
-    .card{
-      background:var(--bg-light);
-      border-radius:18px;
-      padding:20px 18px 22px;
-      margin-bottom:18px;
-    }
-    .card-title{
-      font-family:var(--font-main);
-      font-size:20px;
-      text-transform:uppercase;
-      letter-spacing:0.12em;
-      margin-bottom:8px;
-    }
-    .card-subtitle{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:0.16em;
-      color:#777;
-      margin-bottom:10px;
-    }
-    .card-text{
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    form{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      margin-top:8px;
-    }
-    label{
-      font-size:13px;
-      font-weight:600;
-      margin-bottom:4px;
-      display:block;
-    }
-    input[type="text"],
-    textarea{
-      width:100%;
-      border-radius:999px;
-      border:1px solid #ddd;
-      padding:10px 14px;
-      font-size:14px;
-      outline:none;
-      background:#ffffff;
-    }
-    textarea{
-      border-radius:14px;
-      min-height:70px;
-      resize:vertical;
-    }
-    .radio-group{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px 18px;
-      font-size:14px;
-    }
-    .radio-item{
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .helper-text{
-      font-size:12px;
-      color:#777;
-      margin-top:-4px;
-    }
-    .btn-primary{
-      margin-top:6px;
-      padding:11px 16px;
-      border-radius:999px;
-      border:none;
-      background:var(--accent);
-      color:var(--text-light);
-      font-size:14px;
-      font-weight:600;
-      letter-spacing:0.08em;
-      text-transform:uppercase;
-      cursor:pointer;
-      transition:opacity 0.2s ease;
-    }
-    .btn-primary:hover{opacity:0.9;}
-    .policy{
-      margin-top:8px;
-      font-size:11px;
-      color:#888;
-      line-height:1.4;
-    }
-    footer{
-      margin-top:22px;
-      text-align:center;
-      color:#eee;
-      font-size:11px;
-      opacity:0.8;
-    }
-    @media (min-width:768px){
-      .page{
-        max-width:900px;
-        display:flex;
-        gap:24px;
-        padding:28px 32px 40px;
+    @media (min-width: 768px) {
+      .brutal-shadow {
+        box-shadow: 6px 6px 0px 0px #111;
       }
-      .left-col,.right-col{width:50%;}
-      header{margin-bottom:34px;}
     }
-  </style>
-</head>
-<body>
-<div class="page">
+    .brutal-shadow:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px 0px #111;
+    }
+    .brutal-shadow-sm {
+      box-shadow: 3px 3px 0px 0px #111;
+    }
+    .brutal-input:focus {
+      outline: none;
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px 0px #111;
+    }
+  `}</style>
+);
 
-  <!-- Левая колонка -->
-  <div class="left-col">
+// --- ГЛАВНЫЙ КОМПОНЕНТ ---
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    attendance: 'yes'
+  });
+  const [status, setStatus] = useState('idle');
 
-    <!-- ВАШЕ ФОТО: здесь меняешь только имя файла в src -->
-    <div class="hero-photo">
-      <img src="smorodiny.jpg" alt="Александр и Алина">
-      <div class="hero-tag">да, мы всё ещё женаты</div>
+  // Логика авторизации
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        if (typeof window.__initial_auth_token !== 'undefined' && window.__initial_auth_token) {
+          await signInWithCustomToken(auth, window.__initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Auth failed", err);
+      }
+    };
+    initAuth();
+    const unsubscribe = onAuthStateChanged(auth, setUser);
+    return () => unsubscribe();
+  }, []);
+
+  // Обработка ввода
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Отправка формы
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setStatus('loading');
+
+    try {
+      const rsvpRef = collection(db, 'artifacts', appId, 'public', 'data', 'rsvps_smorodins');
+      
+      await addDoc(rsvpRef, {
+        ...formData,
+        userId: user.uid,
+        createdAt: serverTimestamp(),
+        deviceInfo: navigator.userAgent
+      });
+
+      setStatus('success');
+    } catch (error) {
+      console.error("Error saving RSVP:", error);
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F2F2F2] text-[#111] font-inter selection:bg-[#FF3B30] selection:text-white relative overflow-x-hidden">
+      <CustomStyles />
+      
+      {/* Текстура шума */}
+      <div className="fixed inset-0 pointer-events-none bg-noise z-0 opacity-60 mix-blend-multiply"></div>
+
+      <div className="relative z-10 w-full max-w-xl mx-auto bg-white min-h-screen sm:border-x-2 border-[#111] shadow-2xl">
+        
+        {/* БЕГУЩАЯ СТРОКА (РУССКИЙ ЯЗЫК) */}
+        <div className="bg-[#111] text-white overflow-hidden py-3 border-b-2 border-[#111] select-none">
+          <div className="whitespace-nowrap animate-marquee flex gap-4">
+            {Array(10).fill("20 ИЮНЯ 2026 • ПЕРМЬ • ГОДОВЩИНА • ВРЕМЯ ТУСИТЬ • ").map((text, i) => (
+              <span key={i} className="font-archivo font-black text-sm md:text-lg tracking-wider uppercase">{text}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* HERO БЛОК */}
+        <div className="relative border-b-2 border-[#111]">
+            <div className="w-full h-72 md:h-96 bg-gray-200 relative overflow-hidden group">
+                 {/* Заменена картинка на локальный файл */}
+                 <img 
+                    src="smorodiny.jpg" 
+                    alt="Настроение пары" 
+                    className="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      // Фолбек на случай, если локальная картинка не загрузится (для демонстрации)
+                      e.target.src = "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop";
+                    }}
+                />
+                <div className="absolute inset-0 bg-red-500/10 mix-blend-multiply"></div>
+            </div>
+            
+            <div className="p-4 md:p-6 bg-white absolute -bottom-6 right-6 border-2 border-[#111] bg-[#FF3B30] text-white rotate-[-3deg] brutal-shadow-sm">
+                <Heart className="w-6 h-6 md:w-8 md:h-8 fill-current" />
+            </div>
+        </div>
+
+        {/* ЗАГОЛОВОК (РУССКИЙ ЯЗЫК + АДАПТИВ) */}
+        <header className="p-6 md:p-8 border-b-2 border-[#111] bg-white pt-10">
+          <h1 className="font-archivo font-black text-4xl md:text-6xl leading-[0.9] uppercase tracking-tighter">
+            Смородины<br/>
+            <span className="text-transparent" style={{ WebkitTextStroke: '1px #111' }}>Годовщина</span>
+          </h1>
+        </header>
+
+        {/* ОПИСАНИЕ */}
+        <div className="p-6 md:p-8 border-b-2 border-[#111] bg-white">
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">О событии</span>
+          <p className="text-lg md:text-xl font-bold leading-tight">
+            Выжили в первый год. Нервные клетки потрачены не зря. 
+            Устраиваем шумную вечеринку для своих. <span className="bg-[#FF3B30] text-white px-1 whitespace-nowrap">Без пафоса.</span> С душой.
+          </p>
+        </div>
+
+        {/* ДЕТАЛИ (АДАПТИВНАЯ СЕТКА) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 border-b-2 border-[#111] bg-white divide-y-2 md:divide-y-0 md:divide-x-2 divide-[#111]">
+          {/* Дата */}
+          <div className="p-6 group hover:bg-[#F9F9F9] transition-colors">
+            <div className="mb-2">
+                <Calendar className="w-6 h-6 text-[#FF3B30]" />
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Дата</span>
+            <p className="font-archivo font-black text-2xl mt-1">20.06.26</p>
+            <p className="text-sm font-semibold">Суббота, 17:00</p>
+          </div>
+
+          {/* Локация + Кнопка маршрута */}
+          <div className="p-6 group hover:bg-[#F9F9F9] transition-colors flex flex-col justify-between">
+             <div>
+               <div className="mb-2">
+                  <MapPin className="w-6 h-6 text-[#FF3B30]" />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Локация</span>
+              <p className="font-archivo font-black text-2xl mt-1">Пермь</p>
+              <p className="text-sm font-semibold mb-4">ул. Мира, 41В</p>
+            </div>
+            
+            {/* КНОПКА ПОСТРОИТЬ МАРШРУТ */}
+            <a 
+              href="https://yandex.ru/maps/-/CLD6YH18" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full bg-[#111] text-white py-3 px-4 text-xs font-bold uppercase tracking-wider hover:bg-[#FF3B30] transition-colors brutal-shadow-sm active:translate-y-1 active:translate-x-1 active:shadow-none"
+            >
+              <Navigation className="w-4 h-4" />
+              Построить маршрут
+            </a>
+          </div>
+        </div>
+
+        {/* ФОРМА (БЕЗ ЕДЫ) */}
+        <div className="p-6 md:p-8 bg-white pb-20">
+          <h2 className="font-archivo font-black text-2xl md:text-3xl uppercase mb-8 flex items-center gap-2">
+             Анкета <ArrowRight className="w-6 h-6" />
+          </h2>
+          
+          {status === 'success' ? (
+            <div className="border-2 border-[#111] p-8 bg-[#F9F9F9] brutal-shadow text-center animate-in zoom-in duration-300">
+              <CheckCircle className="w-16 h-16 mx-auto mb-4 text-[#FF3B30]" />
+              <h3 className="font-archivo font-black text-2xl uppercase mb-2">Принято!</h3>
+              <p className="font-medium text-sm md:text-base">
+                {formData.attendance === 'yes' 
+                  ? "Ура! Ждем тебя на тусовке. Готовь печень!" 
+                  : "Эх, жаль... Но мы все равно выпьем за тебя!"}
+              </p>
+              <button 
+                onClick={() => setStatus('idle')}
+                className="mt-6 text-xs md:text-sm underline font-bold uppercase hover:text-[#FF3B30]"
+              >
+                Отправить еще один ответ
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+              
+              {/* Имя */}
+              <div className="relative group">
+                <label className="block text-xs font-bold uppercase tracking-widest mb-2 group-focus-within:text-[#FF3B30] transition-colors">
+                  Кто вы?
+                </label>
+                <input 
+                  type="text" 
+                  name="name"
+                  required
+                  placeholder="Имя Фамилия" 
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full bg-[#F9F9F9] border-2 border-[#111] p-3 md:p-4 text-sm md:text-base font-bold placeholder:font-normal placeholder:text-gray-400 brutal-shadow-sm transition-all brutal-input focus:bg-white rounded-none"
+                />
+              </div>
+
+              {/* Будете? */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-3">
+                  Будете?
+                </label>
+                <div className="flex gap-3 md:gap-4">
+                  <label className="flex-1 cursor-pointer group">
+                    <input 
+                      type="radio" 
+                      name="attendance" 
+                      value="yes" 
+                      checked={formData.attendance === 'yes'}
+                      onChange={handleChange}
+                      className="hidden" 
+                    />
+                    <div className={`
+                      h-12 md:h-14 flex items-center justify-center border-2 border-[#111] font-bold text-sm md:text-base transition-all
+                      ${formData.attendance === 'yes' 
+                        ? 'bg-[#111] text-white brutal-shadow-sm -translate-y-1 -translate-x-1' 
+                        : 'bg-white hover:bg-gray-50'}
+                    `}>
+                      ДА!
+                    </div>
+                  </label>
+                  
+                  <label className="flex-1 cursor-pointer group">
+                    <input 
+                      type="radio" 
+                      name="attendance" 
+                      value="no" 
+                      checked={formData.attendance === 'no'}
+                      onChange={handleChange}
+                      className="hidden" 
+                    />
+                    <div className={`
+                      h-12 md:h-14 flex items-center justify-center border-2 border-[#111] font-bold text-sm md:text-base transition-all
+                      ${formData.attendance === 'no' 
+                        ? 'bg-[#111] text-white brutal-shadow-sm -translate-y-1 -translate-x-1' 
+                        : 'bg-white hover:bg-gray-50'}
+                    `}>
+                      НЕТ :(
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Кнопка отправки */}
+              <button 
+                type="submit" 
+                disabled={status === 'loading'}
+                className="w-full bg-[#FF3B30] text-white border-2 border-[#111] p-4 md:p-5 font-archivo font-black text-lg md:text-xl uppercase tracking-wide brutal-shadow hover:translate-y-1 hover:translate-x-1 hover:shadow-none active:translate-y-1 active:translate-x-1 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
+              >
+                {status === 'loading' ? 'Отправка...' : 'Отправить'}
+              </button>
+
+              {status === 'error' && (
+                <p className="text-red-600 font-bold text-center text-sm flex items-center justify-center gap-2">
+                  <XCircle className="w-4 h-4" />
+                  Что-то пошло не так. Попробуйте снова.
+                </p>
+              )}
+
+            </form>
+          )}
+        </div>
+
+        {/* ФУТЕР */}
+        <footer className="border-t-2 border-[#111] p-6 text-center bg-[#F2F2F2]">
+           <p className="font-archivo font-black uppercase text-xs md:text-sm tracking-widest opacity-40">
+             © 2026 Семья Смородиных
+           </p>
+        </footer>
+
+      </div>
     </div>
-
-    <header>
-      <div class="tagline-big">LOVE</div>
-      <div class="couple-block">
-        <div class="names">Александр и Алина<br>Смородины</div>
-        <div class="subtitle">отпразднуем годовщину свадьбы</div>
-
-        <div class="date-place">
-          20 июня 2026, суббота<br>
-          г. Пермь, ул. Мира, 41В
-        </div>
-
-        <div class="invitation-text">
-          Первый год совместной жизни пережит успешно, нервные клетки частично сохранены.  
-          Идеальный повод устроить шумную вечеринку для своих — без лишнего пафоса, но с максимально тёплой атмосферой.
-        </div>
-      </div>
-    </header>
-
-    <section class="card">
-      <div class="card-title">Детали вечера</div>
-      <div class="card-subtitle">время и настроение</div>
-      <div class="card-text">
-        Собираемся вечером, будет музыка, вкусная еда, танцы и немного хулиганства.  
-        Точный тайминг и доп. детали пришлём ближе к дате в общий чат.
-      </div>
-    </section>
-  </div>
-
-  <!-- Правая колонка: анкета -->
-  <div class="right-col">
-    <section class="card">
-      <div class="card-title">Анкета гостя</div>
-      <div class="card-subtitle">пара минут — и вы в списке</div>
-
-      <form action="#" method="post">
-        <div>
-          <label for="fio">ФИО приглашённого(ых)</label>
-          <input type="text" id="fio" name="fio" placeholder="Например: Иванов Иван" required>
-        </div>
-
-        <div>
-          <label>Будете на празднике?</label>
-          <div class="radio-group">
-            <label class="radio-item">
-              <input type="radio" name="attendance" value="yes" required>
-              <span>Да, конечно</span>
-            </label>
-            <label class="radio-item">
-              <input type="radio" name="attendance" value="no">
-              <span>Увы, не получится</span>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <label for="alcohol">Предпочтения по напиткам</label>
-          <textarea id="alcohol" name="alcohol"
-            placeholder="Например: сухое белое вино, игристое, ром с колой, только безалкогольное и т.п."></textarea>
-          <div class="helper-text">
-            Можно перечислить несколько вариантов — под вас подстроимся.
-          </div>
-        </div>
-
-        <div>
-          <label for="comment">Комментарий (по желанию)</label>
-          <textarea id="comment" name="comment"
-            placeholder="Аллергии, ограничения по еде, любимые треки, шутки и т.д."></textarea>
-        </div>
-
-        <div>
-          <label for="telegram">Ник в Telegram</label>
-          <input type="text" id="telegram" name="telegram" placeholder="@username">
-          <div class="helper-text">
-            Добавим в чат с подробностями и мемами по подготовке.
-          </div>
-        </div>
-
-        <button type="submit" class="btn-primary">
-          отправить анкету
-        </button>
-
-        <p class="policy">
-          Данные нужны только для организации вечеринки: список гостей, рассадка, еда и напитки.
-        </p>
-      </form>
-    </section>
-  </div>
-
-</div>
-
-<footer>
-  Александр и Алина Смородины · 20.06.2026 · Пермь
-</footer>
-
-</body>
-</html>
+  );
+}
