@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const actionButtons = document.querySelectorAll('.btn-choice');
 
   const showStatus = (message, type = 'success') => {
+    if (!status) return;
+
     status.textContent = message;
     status.classList.remove('rsvp-note--success', 'rsvp-note--error');
     status.classList.add(type === 'success' ? 'rsvp-note--success' : 'rsvp-note--error');
