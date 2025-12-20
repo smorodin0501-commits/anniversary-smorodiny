@@ -1,0 +1,279 @@
+:root {
+  --bg: #F2F2F2;
+  --ink: #111111;
+  --accent: #FF3B30;
+  --border: 2px solid var(--ink);
+  --text-light: #ffffff;
+  --text-dark: #111111;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+.wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  border-left: var(--border);
+  border-right: var(--border);
+  min-height: 100vh;
+  background: #fff;
+}
+
+/* Бегущая строка */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--text-light);
+  padding: 12px 0;
+  border-bottom: var(--border);
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+  animation: ticker-loop 20s linear infinite;
+}
+
+.ticker span {
+  display: inline-block;
+  padding-right: 4rem;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+
+@keyframes ticker-loop {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Герой */
+.hero {
+  text-align: center;
+  padding: 0;
+}
+
+.hero-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%) contrast(110%);
+  border-bottom: var(--border);
+}
+
+.big-title {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 0.85;
+  text-transform: uppercase;
+  padding: 20px;
+  border-bottom: var(--border);
+  letter-spacing: -0.03em;
+}
+
+.big-title span {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--ink);
+}
+
+/* Блоки */
+.block {
+  padding: 24px;
+  border-bottom: var(--border);
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+  opacity: 0.6;
+}
+
+.lead-text {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* Детали */
+.details-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.details-col {
+  flex: 1;
+  padding: 20px;
+  border-right: var(--border);
+}
+
+.details-col:last-child {
+  border-right: none;
+}
+
+/* Форма */
+.form-group {
+  margin-bottom: 20px;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  border: var(--border);
+  border-radius: 0;
+  padding: 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  background: #F9F9F9;
+  margin-top: 5px;
+  box-shadow: 4px 4px 0px var(--ink);
+  transition: transform 0.1s;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--ink);
+}
+
+/* Радио */
+.radio-container {
+  display: flex;
+  gap: 10px;
+}
+
+.radio-box {
+  flex: 1;
+  position: relative;
+}
+
+.radio-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  border: var(--border);
+  font-weight: 600;
+  background: #fff;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+}
+
+input[type="radio"]:checked + .radio-visual {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 4px 4px 0 var(--accent);
+  transform: translate(-2px, -2px);
+}
+
+/* Кнопки */
+.btn-submit,
+.btn-map {
+  display: inline-block;
+  margin-top: 10px;
+  background: #fff;
+  color: var(--ink);
+  border: var(--border);
+  padding: 10px 14px;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px var(--ink);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  padding: 20px;
+  font-family: 'Archivo', sans-serif;
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 6px 6px 0px var(--ink);
+}
+
+.btn-submit:active {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0px var(--ink);
+}
+
+.btn-map:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* Дресс-код */
+.dress-code .block {
+  background: #f9f9f9;
+}
+
+.dress-palette {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.dress-palette img {
+  display: block;
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-family: 'Archivo', sans-serif;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .details-col {
+    border-right: none;
+    border-bottom: var(--border);
+  }
+
+  .details-col:last-child {
+    border-bottom: none;
+  }
+
+  .big-title {
+    font-size: 40px;
+  }
+
+  .hero-img {
+    height: 280px;
+  }
+}
