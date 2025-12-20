@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Годовщина Александра и Алины Смородиных</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg-main: #3b0014;
+      --bg-light: #f7f2ef;
+      --accent:   #b41b33;
+      --text-main:#111111;
+      --text-light:#ffffff;
+      --font-main:"Playfair Display", "Times New Roman", serif;
+      --font-second:"Montserrat", "Arial", sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body{
+      font-family:var(--font-second);
+      background:var(--bg-main);
+      color:var(--text-main);
+      display:flex;
+      justify-content:center;
+    }
+    .page{
+      max-width:480px;
+      width:100%;
+      background:var(--bg-main);
+      min-height:100vh;
+      padding:20px 16px 32px;
+    }
+
+    /* Фото-блок */
+    .hero-photo{
+      border-radius:24px;
+      overflow:hidden;
+      margin-bottom:18px;
+      position:relative;
+    }
+    .hero-photo img{
+      width:100%;
+      height:auto;
+      display:block;
+      object-fit:cover;
+    }
+    .hero-tag{
+      position:absolute;
+      left:16px;
+      bottom:14px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.55);
+      color:#fff;
+      font-size:11px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+    }
+
+    header{
+      position:relative;
+      margin-bottom:28px;
+      color:var(--text-light);
+      text-align:left;
+    }
+    .tagline-big{
+      font-family:var(--font-main);
+      font-size:52px;
+      line-height:0.9;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      opacity:0.15;
+      position:absolute;
+      right:0;
+      top:0;
+    }
+    .couple-block{
+      position:relative;
+      z-index:2;
+      margin-top:36px;
+    }
+    .names{
+      font-family:var(--font-main);
+      font-size:26px;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .subtitle{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+      opacity:0.7;
+    }
+    .date-place{
+      margin-top:16px;
+      font-size:13px;
+      line-height:1.4;
+      opacity:0.8;
+    }
+    .invitation-text{
+      margin-top:22px;
+      font-size:14px;
+      line-height:1.6;
+      max-width:360px;
+    }
+
+    .card{
+      background:var(--bg-light);
+      border-radius:18px;
+      padding:20px 18px 22px;
+      margin-bottom:18px;
+    }
+    .card-title{
+      font-family:var(--font-main);
+      font-size:20px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      margin-bottom:8px;
+    }
+    .card-subtitle{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+      color:#777;
+      margin-bottom:10px;
+    }
+    .card-text{
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    form{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      margin-top:8px;
+    }
+    label{
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:4px;
+      display:block;
+    }
+    input[type="text"],
+    textarea{
+      width:100%;
+      border-radius:999px;
+      border:1px solid #ddd;
+      padding:10px 14px;
+      font-size:14px;
+      outline:none;
+      background:#ffffff;
+    }
+    textarea{
+      border-radius:14px;
+      min-height:70px;
+      resize:vertical;
+    }
+    .radio-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px 18px;
+      font-size:14px;
+    }
+    .radio-item{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .helper-text{
+      font-size:12px;
+      color:#777;
+      margin-top:-4px;
+    }
+    .btn-primary{
+      margin-top:6px;
+      padding:11px 16px;
+      border-radius:999px;
+      border:none;
+      background:var(--accent);
+      color:var(--text-light);
+      font-size:14px;
+      font-weight:600;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:opacity 0.2s ease;
+    }
+    .btn-primary:hover{opacity:0.9;}
+    .policy{
+      margin-top:8px;
+      font-size:11px;
+      color:#888;
+      line-height:1.4;
+    }
+    footer{
+      margin-top:22px;
+      text-align:center;
+      color:#eee;
+      font-size:11px;
+      opacity:0.8;
+    }
+    @media (min-width:768px){
+      .page{
+        max-width:900px;
+        display:flex;
+        gap:24px;
+        padding:28px 32px 40px;
+      }
+      .left-col,.right-col{width:50%;}
+      header{margin-bottom:34px;}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Левая колонка -->
+  <div class="left-col">
+    <!-- Ваше фото -->
+    <div class="hero-photo">
+      <img src="smorodiny.jpg" alt="Алина и Александр">
+      <div class="hero-tag">Да! Мы женаты</div>
+    </div>
+
+    <header>
+      <div class="tagline-big">LOVE</div>
+      <div class="couple-block">
+        <div class="names">Алина и Александр<br>Смородины</div>
+        <div class="subtitle">отпразднуем годовщину свадьбы</div>
+
+        <div class="date-place">
+          20 июня 2026, суббота<br>
+          г. Пермь, ул. Мира, 41В
+        </div>
+
+        <div class="invitation-text">
+          Первый год совместной жизни пережит успешно, нервные клетки частично сохранены.  
+          Идеальный повод устроить шумную вечеринку для своих — без лишнего пафоса, но с максимально тёплой атмосферой.
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-title">Детали вечера</div>
+      <div class="card-subtitle">время и настроение</div>
+      <div class="card-text">
+        Собираемся вечером, будет музыка, вкусная еда, танцы и немного хулиганства.  
+        Точный тайминг и доп. детали пришлём ближе к дате в общий чат.
+      </div>
+    </section>
+  </div>
+
+  <!-- Правая колонка: анкета -->
+  <div class="right-col">
+    <section class="card">
+      <div class="card-title">Анкета гостя</div>
+      <div class="card-subtitle">пара минут — и вы в списке</div>
+
+      <form action="#" method="post">
+        <div>
+          <label for="fio">ФИО приглашённого(ых)</label>
+          <input type="text" id="fio" name="fio" placeholder="Например: Иванов Иван" required>
+        </div>
+
+        <div>
+          <label>Будете на празднике?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" name="attendance" value="yes" required>
+              <span>Да, конечно</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="attendance" value="no">
+              <span>Увы, не получится</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="alcohol">Предпочтения по напиткам</label>
+          <textarea id="alcohol" name="alcohol"
+            placeholder="Например: сухое белое вино, игристое, ром с колой, только безалкогольное и т.п."></textarea>
+          <div class="helper-text">
+            Можно перечислить несколько вариантов — под вас подстроимся.
+          </div>
+        </div>
+
+        <div>
+          <label for="comment">Комментарий (по желанию)</label>
+          <textarea id="comment" name="comment"
+            placeholder="Аллергии, ограничения по еде, любимые треки, шутки и т.д."></textarea>
+        </div>
+
+        <div>
+          <label for="telegram">Ник в Telegram</label>
+          <input type="text" id="telegram" name="telegram" placeholder="@username">
+          <div class="helper-text">
+            Добавим в чат с подробностями и мемами по подготовке.
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          отправить анкету
+        </button>
+
+        <p class="policy">
+          Данные нужны только для организации вечеринки: список гостей, рассадка, еда и напитки.
+        </p>
+      </form>
+    </section>
+  </div>
+
+</div>
+
+<footer>
+  Александр и Алина Смородины · 20.06.2026 · Пермь
+</footer>
+
+</body>
+</html>
