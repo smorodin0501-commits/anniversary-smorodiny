@@ -41,7 +41,7 @@ body {
 }
 
 .ticker {
-  display: inline-block;
+  display: inline-flex; /* Используем flex, чтобы элементы встали ровно в ряд */
   white-space: nowrap;
   will-change: transform;
   animation: ticker-loop 20s linear infinite;
@@ -57,8 +57,8 @@ body {
 }
 
 @keyframes ticker-loop {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translateX(0); } /* Начинаем показ сразу без отступа */
+  100% { transform: translateX(-50%); } /* Сдвигаем на 50%, создавая идеальную петлю */
 }
 
 /* Герой */
