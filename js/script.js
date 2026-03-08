@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       form.reset();
-      guestsInput.value = 1;
     });
   });
 });
