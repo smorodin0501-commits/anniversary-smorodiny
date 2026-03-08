@@ -344,3 +344,28 @@ textarea:focus {
   color: #FF3B30; /* Красный цвет */
   font-weight: 600; /* Делает текст немного жирным для акцента */
 }
+/* Кнопка Telegram */
+.btn-telegram {
+  display: inline-block;
+  background: #2AABEE; /* Узнаваемый цвет Telegram */
+  color: #fff;
+  border: var(--border);
+  padding: 14px 28px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+  cursor: pointer;
+}
+
+.btn-telegram:hover {
+  background: #2298D6; /* Чуть более темный синий при наведении */
+}
+
+.btn-telegram:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink); /* Эффект "вдавливания" при клике */
+}
