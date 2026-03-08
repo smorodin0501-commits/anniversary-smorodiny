@@ -118,7 +118,31 @@
               required
             >
           </div>
+<div class="form-group">
+            <label for="guests" class="label">Количество персон</label>
+            <input
+              type="number"
+              id="guests"
+              name="guests"
+              min="1"
+              max="10"
+              placeholder="Например: 2"
+              required
+            >
+          </div>
 
+          <div class="form-group">
+            <span class="label">Предпочтение по алкоголю (можно выбрать несколько)</span>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Вино красное полусладкое"> Вино красное полусладкое</label>
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Вино красное сухое"> Вино красное сухое</label>
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Вино белое полусладкое"> Вино белое полусладкое</label>
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Вино белое сухое"> Вино белое сухое</label>
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Шампанское"> Шампанское</label>
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Крепкое"> Крепкое (больше 40 градусов)</label>
+              <label class="checkbox-label"><input type="checkbox" name="alcohol" value="Не пью"> Не пью</label>
+            </div>
+          </div>
           <div class="form-group">
             <span class="label">Ответ</span>
             <div class="rsvp-actions">
@@ -154,6 +178,7 @@
   <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
