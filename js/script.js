@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // === ВСТАВЬ СВОИ ДАННЫЕ ИЗ TELEGRAM СЮДА ===
   const BOT_TOKEN = '8728738189:AAHVj8l_8jmpgTwDWHtzo3JTX4LdGIMkg_4'; 
-  const CHAT_ID = '504788075';
+  const CHAT_ID = '-5108248291';
   // ===========================================
 
   const showStatus = (message, type = 'success') => {
