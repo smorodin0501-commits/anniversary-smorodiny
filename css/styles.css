@@ -249,7 +249,7 @@ textarea:focus {
 }
 
 .btn-choice--yes {
-  background: var(--accent);
+  background: #9B111E; /* Красивый вишневый оттенок */
   color: #fff;
 }
 
@@ -264,7 +264,7 @@ textarea:focus {
 }
 
 .btn-choice--yes:hover {
-  background: #e13228;
+  background: #7A0D18; /* Чуть более темный вишневый для эффекта нажатия */
 }
 
 .btn-choice--no:hover {
@@ -339,4 +339,8 @@ textarea:focus {
   accent-color: var(--ink); /* Окрашивает галочку в черный цвет */
   margin: 0;
   box-shadow: none;
+}
+.highlight-date {
+  color: #FF3B30; /* Красный цвет */
+  font-weight: 600; /* Делает текст немного жирным для акцента */
 }
