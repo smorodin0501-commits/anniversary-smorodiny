@@ -5,57 +5,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const guestsInput = document.getElementById('guests');
   const actionButtons = document.querySelectorAll('.btn-choice');
 
-  // === ВСТАВЬ СВОИ ДАННЫЕ ИЗ TELEGRAM СЮДА ===
+  // === НАСТРОЙКИ TELEGRAM ===
+  // Санек, не забудь вставить токен между кавычками!
   const BOT_TOKEN = '8728738189:AAHVj8l_8jmpgTwDWHtzo3JTX4LdGIMkg_4'; 
-  const CHAT_ID = '-5108248291';
-  // 2. Используем зеркало вместо заблокированного api.telegram.org
-const PROXY_URL = "https://api.tgproxy.it/bot" + TOKEN + "/sendMessage";
+  const CHAT_ID = '-5108248291'; 
+  // Используем прокси, чтобы работало в РФ без VPN
+  const PROXY_URL = `https://api.tgproxy.it/bot${BOT_TOKEN}/sendMessage`;
 
-async function sendToTelegram(message) {
-  try {
-    const response = await fetch(PROXY_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: message,
-        parse_mode: 'HTML'
-      })
-    });
-
-    if (response.ok) {
-      document.getElementById('rsvp-status').innerText = "Успешно отправлено!";
-    } else {
-      throw new Error('Ошибка сети');
-    }
-  } catch (error) {
-    console.error("Ошибка:", error);
-    document.getElementById('rsvp-status').innerText = "Ошибка при отправке. Попробуйте позже.";
-  }
-}
-  // ===========================================
-
+  // Функция для отображения статуса
   const showStatus = (message, type = 'success') => {
     if (!status) return;
     status.textContent = message;
-    status.classList.remove('rsvp-note--success', 'rsvp-note--error');
+    status.className = 'rsvp-note'; // Сброс классов
     status.classList.add(type === 'success' ? 'rsvp-note--success' : 'rsvp-note--error');
   };
 
+  // Валидация
   const validate = () => {
     if (!nameInput.value.trim()) {
       showStatus('Пожалуйста, укажите имя и фамилию.', 'error');
       nameInput.focus();
       return false;
     }
-
     const guests = Number(guestsInput.value);
     if (!guests || guests < 1) {
       showStatus('Укажи количество персон (минимум 1).', 'error');
       guestsInput.focus();
       return false;
     }
-
     return true;
   };
 
@@ -65,36 +42,31 @@ async function sendToTelegram(message) {
 
       if (!validate()) return;
 
-      // Собираем данные формы
       const name = nameInput.value.trim();
       const guests = guestsInput.value;
-
-      // Собираем отмеченный алкоголь
       const alcoholCheckboxes = document.querySelectorAll('input[name="alcohol"]:checked');
       const alcohol = Array.from(alcoholCheckboxes).map(cb => cb.value).join(', ') || 'Не выбрано';
 
-      // Формируем текст сообщения для Телеграма
+      // Формируем текст
       let messageText = '';
       if (action === 'accept') {
-        messageText = `🎉 НОВАЯ АНКЕТА (ПРИДУТ)!\n\nИмя: ${name}\nПерсон: ${guests}\nАлкоголь: ${alcohol}`;
+        messageText = `🎉 <b>НОВАЯ АНКЕТА (ПРИДУТ)!</b>\n\n👤 Имя: ${name}\n👥 Персон: ${guests}\n🍷 Алкоголь: ${alcohol}`;
       } else {
-        messageText = `😔 ОТКАЗ (НЕ СМОГУТ):\n\nИмя: ${name}`;
+        messageText = `😔 <b>ОТКАЗ (НЕ СМОГУТ):</b>\n\n👤 Имя: ${name}`;
       }
 
-      // Показываем гостю, что идет загрузка, и блокируем кнопку от двойного клика
       showStatus('Отправка анкеты...', 'success');
       button.disabled = true;
 
       try {
-        // Отправляем запрос к API Telegram
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        // Отправляем именно через PROXY_URL
+        const response = await fetch(PROXY_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chat_id: CHAT_ID,
             text: messageText,
+            parse_mode: 'HTML'
           }),
         });
 
@@ -104,14 +76,15 @@ async function sendToTelegram(message) {
           } else {
             showStatus('Спасибо за ответ. Будем скучать!', 'success');
           }
-          form.reset(); // Очищаем форму после успешной отправки
+          form.reset(); 
         } else {
-          showStatus('Произошла ошибка при отправке. Пожалуйста, напишите нам лично.', 'error');
+          showStatus('Ошибка сервера. Попробуйте включить VPN или напишите нам лично.', 'error');
         }
       } catch (error) {
         showStatus('Ошибка сети. Проверьте подключение к интернету.', 'error');
+        console.error('Ошибка:', error);
       } finally {
-         button.disabled = false; // Разблокируем кнопку обратно
+        button.disabled = false;
       }
     });
   });
