@@ -8,6 +8,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // === ВСТАВЬ СВОИ ДАННЫЕ ИЗ TELEGRAM СЮДА ===
   const BOT_TOKEN = '8728738189:AAHVj8l_8jmpgTwDWHtzo3JTX4LdGIMkg_4'; 
   const CHAT_ID = '-5108248291';
+  // 2. Используем зеркало вместо заблокированного api.telegram.org
+const PROXY_URL = "https://api.tgproxy.it/bot" + TOKEN + "/sendMessage";
+
+async function sendToTelegram(message) {
+  try {
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: 'HTML'
+      })
+    });
+
+    if (response.ok) {
+      document.getElementById('rsvp-status').innerText = "Успешно отправлено!";
+    } else {
+      throw new Error('Ошибка сети');
+    }
+  } catch (error) {
+    console.error("Ошибка:", error);
+    document.getElementById('rsvp-status').innerText = "Ошибка при отправке. Попробуйте позже.";
+  }
+}
   // ===========================================
 
   const showStatus = (message, type = 'success') => {
