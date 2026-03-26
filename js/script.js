@@ -1,13 +1,3 @@
-// === ГЛОБАЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТВЕТА ОТ ВК ===
-// Она должна быть снаружи, чтобы тег <script> мог к ней обратиться
-window.vkCallback = function(response) {
-  if (response.response) {
-    console.log('Уведомление успешно доставлено в ВК');
-  } else {
-    console.error('Ошибка отправки в ВК:', response.error);
-  }
-};
-
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('rsvp-form');
   const status = document.getElementById('rsvp-status');
@@ -21,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const TG_PROXY_URL = `https://api.tgproxy.it/bot${TG_BOT_TOKEN}/sendMessage`;
 
   // === НАСТРОЙКИ ВКОНТАКТЕ ===
-  // Не забудь вставить токен и ваши с Алиной ID (через запятую)
   const VK_TOKEN = 'vk1.a.JkQHmQWu79v9J9U35o2lWZBojUBVMUx2lAn9HWqHUtERa0TDPuN6XZXndKmyzRpnpxk3UofDzbvHEB43Lk3cA_TIDapJymfYUsf4ri8IfkvYQJmkQw-rWKkl12LyoQ4ZOIITIOKbhSwJrE9TKDixLWAY_eOWM7heuv7f46PGAGtOxDrIl1-qwE7orbyrrQoNa97afRIylsthZks6ArguvA';
   const VK_USER_IDS = '55868327,143992279'; 
 
@@ -60,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const alcoholCheckboxes = document.querySelectorAll('input[name="alcohol"]:checked');
       const alcohol = Array.from(alcoholCheckboxes).map(cb => cb.value).join(', ') || 'Не выбрано';
 
-      // Формируем текст (HTML для TG, обычный текст для ВК)
       let messageTextTG = '';
       let messageTextVK = '';
 
@@ -73,46 +61,79 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       showStatus('Отправка анкеты...', 'success');
-      button.disabled = true;
-
-      // 1. ОТПРАВКА В ВК (через JSONP)
-      const randomId = Date.now();
-      const vkUrl = `https://api.vk.com/method/messages.send?user_ids=${VK_USER_IDS}&message=${encodeURIComponent(messageTextVK)}&random_id=${randomId}&v=5.131&access_token=${VK_TOKEN}&callback=vkCallback`;
       
-      const script = document.createElement('script');
-      script.src = vkUrl;
-      document.body.appendChild(script);
-      script.onload = () => script.remove(); // Убираем за собой тег
+      // Блокируем все кнопки, чтобы не было двойных кликов
+      actionButtons.forEach(btn => btn.disabled = true);
 
-      // 2. ОТПРАВКА В TELEGRAM
-      try {
-        const response = await fetch(TG_PROXY_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TG_CHAT_ID,
-            text: messageTextTG,
-            parse_mode: 'HTML'
-          }),
+      // --- Функция отправки в ВК (возвращает Promise) ---
+      const sendVK = () => {
+        return new Promise((resolve) => {
+          const randomId = Date.now();
+          const callbackName = 'vkCallback_' + randomId; // Уникальный callback для каждого запроса
+
+          window[callbackName] = function(response) {
+            delete window[callbackName]; // Очищаем глобальную область после ответа
+            if (response.response) {
+              resolve(true); // Успех
+            } else {
+              console.error('Ошибка отправки в ВК:', response.error);
+              resolve(false); // Ошибка
+            }
+          };
+
+          const vkUrl = `https://api.vk.com/method/messages.send?user_ids=${VK_USER_IDS}&message=${encodeURIComponent(messageTextVK)}&random_id=${randomId}&v=5.131&access_token=${VK_TOKEN}&callback=${callbackName}`;
+          
+          const script = document.createElement('script');
+          script.src = vkUrl;
+          document.body.appendChild(script);
+          
+          script.onload = () => script.remove(); 
+          script.onerror = () => {
+            console.error('Скрипт ВК не загрузился');
+            script.remove();
+            delete window[callbackName];
+            resolve(false); // Ошибка сети/блокировка
+          };
         });
+      };
 
-        if (response.ok) {
-          if (action === 'accept') {
-            showStatus('Спасибо! Присутствие подтверждено, очень ждём вас 💌', 'success');
-          } else {
-            showStatus('Спасибо за ответ. Будем скучать!', 'success');
-          }
-          form.reset(); 
-        } else {
-          // Если TG отвалился, но ВК ушел
-          showStatus('Ошибка сервера Telegram. Но мы всё равно получили вашу анкету!', 'error');
+      // --- Функция отправки в Telegram (возвращает Promise) ---
+      const sendTG = async () => {
+        try {
+          const response = await fetch(TG_PROXY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: TG_CHAT_ID,
+              text: messageTextTG,
+              parse_mode: 'HTML'
+            }),
+          });
+          return response.ok; // Возвращает true, если статус 200-299
+        } catch (error) {
+          console.error('Ошибка сети TG:', error);
+          return false; // Ошибка
         }
-      } catch (error) {
-        showStatus('Ошибка сети. Проверьте подключение к интернету.', 'error');
-        console.error('Ошибка TG:', error);
-      } finally {
-        button.disabled = false;
+      };
+
+      // Ждем результаты от обоих сервисов параллельно
+      const [vkSuccess, tgSuccess] = await Promise.all([sendVK(), sendTG()]);
+
+      // Проверяем: если хотя бы один сервис сработал (true), то считаем успешным
+      if (vkSuccess || tgSuccess) {
+        if (action === 'accept') {
+          showStatus('Спасибо! Присутствие подтверждено, очень ждём вас 💌', 'success');
+        } else {
+          showStatus('Спасибо за ответ. Будем скучать!', 'success');
+        }
+        form.reset(); 
+      } else {
+        // Если оба вернули false
+        showStatus('Ошибка сети. Не удалось отправить анкету. Пожалуйста, напишите нам лично.', 'error');
       }
+
+      // Разблокируем кнопки
+      actionButtons.forEach(btn => btn.disabled = false);
     });
   });
 });
