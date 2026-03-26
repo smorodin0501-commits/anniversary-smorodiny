@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const BOT_TOKEN = '8728738189:AAHVj8l_8jmpgTwDWHtzo3JTX4LdGIMkg_4'; 
   const CHAT_ID = '-5108248291'; 
   // Используем прокси, чтобы работало в РФ без VPN
-  const PROXY_URL = `https://api.tgproxy.it/bot${BOT_TOKEN}/sendMessage`;
+  const PROXY_URL = `https://corsproxy.io/?https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
   // Функция для отображения статуса
   const showStatus = (message, type = 'success') => {
